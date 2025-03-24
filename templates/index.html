@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket Match Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Cricket Match Prediction (T20)</h1>
+        <form id="predictionForm">
+            <label for="batting_team">Batting Team:</label>
+            <select id="batting_team" name="batting_team">
+                {% for team in teams %}
+                <option value="{{ team }}">{{ team }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="bowling_team">Bowling Team:</label>
+            <select id="bowling_team" name="bowling_team">
+                {% for team in teams %}
+                <option value="{{ team }}">{{ team }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="city">City:</label>
+            <select id="city" name="city">
+                {% for city in cities %}
+                <option value="{{ city }}">{{ city }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="runs_left">Runs Left:</label>
+            <input type="number" id="runs_left" name="runs_left" required>
+
+            <label for="balls_left">Balls Left:</label>
+            <input type="number" id="balls_left" name="balls_left" required>
+
+            <label for="wickets">Wickets Left:</label>
+            <input type="number" id="wickets" name="wickets" required>
+
+            <label for="total_runs">Total Runs:</label>
+            <input type="number" id="total_runs" name="total_runs" required>
+
+            <label for="crr">Current Run Rate (CRR):</label>
+            <input type="number" step="0.01" id="crr" name="crr" required>
+
+            <label for="rrr">Required Run Rate (RRR):</label>
+            <input type="number" step="0.01" id="rrr" name="rrr" required>
+
+            <button type="button" onclick="predict()">Predict</button>
+        </form>
+
+        <div id="result">
+            <h2>Prediction Result</h2>
+            <p><strong>Win Probability:</strong> <span id="win_prob"></span>%</p>
+            <p><strong>Lose Probability:</strong> <span id="lose_prob"></span>%</p>
+            <img id="graph" style="display:none;">
+        </div>
+    </div>
+
+    <script>
+        function predict() {
+            let formData = new URLSearchParams(new FormData(document.getElementById("predictionForm"))).toString();
+            fetch(`/predict?${formData}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert("Error: " + data.error);
+                    } else {
+                        document.getElementById("win_prob").textContent = data.win;
+                        document.getElementById("lose_prob").textContent = data.lose;
+                        document.getElementById("graph").src = data.graph;
+                        document.getElementById("graph").style.display = "block";
+                    }
+                });
+        }
+    </script>
+</body>
+</html>
