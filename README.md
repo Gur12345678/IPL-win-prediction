@@ -1,4 +1,2 @@
 # IPL-win-prediction
-erer
-hdshf
-fjhdfd
+this is the ipl match win prediction project 
